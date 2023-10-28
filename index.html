@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="ERC-20 mint" />
+        <title>ERC-20 mint</title>
+
+        <link href="css/bootstrap.min.css" rel="stylesheet" />
+        <link href="css/styles.css" rel="stylesheet" />
+        
+        <script src="js/ethers-5.6.umd.min.js"></script>
+    </head>
+    <body>
+        <div class="container-fluid bg-light text-dark py-5" data-bs-theme="light">
+            <div class="container">
+                <h2>ERC-20 mint</h2>
+                
+                <p>
+                    Welcome to the ERC-20 bulk mint page for $tom.
+                </p>
+                
+                <div class="bd-callout bd-callout-info mb-0">
+                    <em>
+                        <div id="info-connect">Not connected</div>
+                    </em>
+                </div>
+                
+                <button id="btn-connect" class="btn btn-primary mt-3" style="display: none;">Connect your wallet</button>
+            </div>
+        </div>
+        
+        <div class="container-fluid py-5">
+            <div class="container">
+                <h4>Amount of mints</h4>
+
+                <select id="amount" class="form-select">
+                    <option selected>Amount of mints</option>                    
+                </select>
+                
+                <button id="btn-mint" class="btn btn-primary mt-3">Mint</button>
+            </div>
+        </div>
+
+        <script src="js/index.js"></script>
+    </body>
+</html>
