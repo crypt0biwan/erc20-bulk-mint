@@ -32,10 +32,29 @@
         
         <div class="container-fluid py-5">
             <div class="container">
-                <h4>Amount of mints</h4>
+                <h4>Token details</h4>
 
-                <select id="amount" class="form-select">
-                    <option selected>Amount of mints</option>                    
+                <form class="row g-3">
+                    <div class="col-12 col-md-4">
+                        <label for="ticker" class="visually-hidden">Ticker</label>
+                        <input type="text" class="form-control" id="ticker" placeholder="Ticker" value="facet">
+                    </div>
+                    <div class="col-12 col-md-4">
+                        <label for="max" class="visually-hidden">Max</label>
+                        <input type="text" class="form-control" id="max" placeholder="Max" value="21000000">
+                    </div>
+                    <div class="col-12 col-md-4">
+                        <label for="amount" class="visually-hidden">Amount</label>
+                        <input type="text" class="form-control" id="amount" placeholder="Amount" value="1000">
+                    </div>
+                </form>
+            </div>
+
+            <div class="container mt-4">
+                <h4>Number of mints</h4>
+
+                <select id="number_of_mints" class="form-select">
+                    <option selected>Number of mints</option>                    
                 </select>
                 
                 <button id="btn-mint" class="btn btn-primary mt-3">Mint</button>
