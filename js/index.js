@@ -16,9 +16,6 @@ function setConnected(isConnected, userAddr) {
     document.querySelector('#btn-connect').style.display = isConnected ? 'none' : 'block'
 }
 
-const ids = [
-]
-
 const convertToHexa = (str = '') =>{
     const res = [];
     const { length: len } = str;
