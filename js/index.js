@@ -26,12 +26,13 @@ const convertToHexa = (str = '') =>{
     return res.join('');
 }
 
-const checkExisting = (txts) => {
+const encode = txt => CryptoJS.SHA256(txt).toString(CryptoJS.enc.Hex)
+
+const checkExisting = (data) => {
     let hashes = []
 
-    txts.forEach(txt => {
-        const encoded = `data:,${txt}`
-        const hash = CryptoJS.SHA256(encoded).toString(CryptoJS.enc.Hex)
+    Object.keys(data).forEach((key, i) => {
+        let hash = data[key]
         hashes.push(hash)
     })
 
@@ -41,35 +42,39 @@ const checkExisting = (txts) => {
     let requestOptions = {
         method: 'POST',
         headers: myHeaders,
-        body: JSON.stringify(hashes),
-        redirect: 'follow'
+        body: JSON.stringify(hashes)
     }
 
     return fetch("https://api.ethscriptions.com/api/ethscriptions/exists_multi", requestOptions)
 }
 
 const getUnused = async (number_of_mints) => {
-    let numbers_try = []
-    let txts = []
+    let check_eths = []
     let numbers = []
 
     do {
-        for(let i=0; i<number_of_mints; i++) {
+        check_eths = []
+
+        for(let i=0; i<number_of_mints*2; i++) {
             let number = Math.ceil(Math.random() * max)
-            numbers_try.push(number)
-            txts.push(`{"p":"erc-20","op":"mint","tick":"${ticker}","id":"${number}","amt":"${amount}"}`)
+            check_eths[number] = encode(`data:,{"p":"erc-20","op":"mint","tick":"${ticker}","id":"${number}","amt":"${amount}"}`)
         }
 
-        let resp = await (await checkExisting(txts)).json()
+        let resp = await (await checkExisting(check_eths)).json()
 
         Object.keys(resp).forEach((key, i) => {
             let val = resp[key]
+            let number = Object.keys(check_eths).filter(function(k) {
+                return check_eths[k] == key;
+            })[0]
 
             if(val === null && numbers.length < number_of_mints) {
-                numbers.push(numbers_try[i])
+                console.log(`Id "${number}" is FREE`)
+                numbers.push(number)
+            } else {
+                console.log(`Mint with id "${number}" already exists`)
             }
         })
-
     } while (numbers.length < number_of_mints)
 
     return numbers
@@ -77,6 +82,8 @@ const getUnused = async (number_of_mints) => {
 
 async function send_txs(number_of_mints) {
     let numbers = await getUnused(number_of_mints)
+
+    console.log(numbers.join(','))
 
     for(let i=0; i<numbers.length; i++) {
         let number = numbers[i]
@@ -147,3 +154,27 @@ document.querySelector('#btn-mint').addEventListener('click', e => {
 
     send_txs(parseInt(document.getElementById('number_of_mints').value, 10))
 })
+
+
+async function init() {
+
+    let resp = await (await checkExisting(['{"p":"erc-20","op":"mint","tick":"1m","id":"14656","amt":"1000"}'])).json()
+    
+    // let resp = await (await checkExisting(txts)).json()
+
+    Object.keys(resp).forEach((key, i) => {
+        let val = key
+
+        console.log('val: ' + JSON.stringify(val))
+        console.log(val.length)
+
+        if(val === null) {
+            console.log(val)
+        }
+    })
+
+
+    // console.log(resp)
+}
+
+// init()
