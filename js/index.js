@@ -5,7 +5,7 @@ let signer = false
 
 let connectedUserAccount = null
 
-let ticker = 'facet'
+let ticker = '1m'
 let max = 21000
 let amount = 1000
     
@@ -29,19 +29,60 @@ const convertToHexa = (str = '') =>{
     return res.join('');
 }
 
-const getUnused = () => {
-    let number = Math.ceil(Math.random() * max)
+const checkExisting = (txts) => {
+    let hashes = []
+
+    txts.forEach(txt => {
+        const encoded = `data:,${txt}`
+        const hash = CryptoJS.SHA256(encoded).toString(CryptoJS.enc.Hex)
+        hashes.push(hash)
+    })
+
+    let myHeaders = new Headers()
+    myHeaders.append("Content-Type", "application/json")
+
+    let requestOptions = {
+        method: 'POST',
+        headers: myHeaders,
+        body: JSON.stringify(hashes),
+        redirect: 'follow'
+    }
+
+    return fetch("https://api.ethscriptions.com/api/ethscriptions/exists_multi", requestOptions)
+}
+
+const getUnused = async (number_of_mints) => {
+    let numbers_try = []
+    let txts = []
+    let numbers = []
 
     do {
-        number = Math.ceil(Math.random() * max)
-    } while (ids.includes(number))
+        for(let i=0; i<number_of_mints; i++) {
+            let number = Math.ceil(Math.random() * max)
+            numbers_try.push(number)
+            txts.push(`{"p":"erc-20","op":"mint","tick":"${ticker}","id":"${number}","amt":"${amount}"}`)
+        }
 
-    return number
+        let resp = await (await checkExisting(txts)).json()
+
+        Object.keys(resp).forEach((key, i) => {
+            let val = resp[key]
+
+            if(val === null && numbers.length < number_of_mints) {
+                numbers.push(numbers_try[i])
+            }
+        })
+
+    } while (numbers.length < number_of_mints)
+
+    return numbers
 }
 
 async function send_txs(number_of_mints) {
-    for(let i=0; i<number_of_mints; i++) {
-        let number = getUnused()
+    let numbers = await getUnused(number_of_mints)
+
+    for(let i=0; i<numbers.length; i++) {
+        let number = numbers[i]
         let txt = `data:,{"p":"erc-20","op":"mint","tick":"${ticker}","id":"${number}","amt":"${amount}"}`
         let encoded = `0x${convertToHexa(txt)}`
 
