@@ -154,27 +154,3 @@ document.querySelector('#btn-mint').addEventListener('click', e => {
 
     send_txs(parseInt(document.getElementById('number_of_mints').value, 10))
 })
-
-
-async function init() {
-
-    let resp = await (await checkExisting(['{"p":"erc-20","op":"mint","tick":"1m","id":"14656","amt":"1000"}'])).json()
-    
-    // let resp = await (await checkExisting(txts)).json()
-
-    Object.keys(resp).forEach((key, i) => {
-        let val = key
-
-        console.log('val: ' + JSON.stringify(val))
-        console.log(val.length)
-
-        if(val === null) {
-            console.log(val)
-        }
-    })
-
-
-    // console.log(resp)
-}
-
-// init()
